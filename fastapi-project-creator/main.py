@@ -98,7 +98,7 @@ import os
 class Settings(BaseSettings):
     PROJECT_NAME: str = "FastAPI App"
     DESCRIPTION: str = "FastAPI application"
-    VERSION: str = "0.1.0"
+    VERSION: str = "0.1.1"
     API_V1_STR: str = "/api/v1"
 
     # Database
@@ -134,7 +134,7 @@ def get_db():
 
 ENV_FILE = """PROJECT_NAME="FastAPI App"
 DESCRIPTION="FastAPI application"
-VERSION="0.1.0"
+VERSION="0.1.1"
 DATABASE_URL="sqlite:///./app.db"
 """
 

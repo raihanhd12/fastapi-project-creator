@@ -2,3 +2,5 @@
 /.venv
 /.vscode
 .DS_Store
+/fastapi_project_creator.egg-info
+/dist
