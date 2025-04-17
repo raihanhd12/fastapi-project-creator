@@ -1,6 +1,6 @@
 # FastAPI Generator
 
-A simple CLI tool to generate FastAPI project structure, inspired because I haven't found a way to quickly create the folder structure.
+A simple CLI tool to generate FastAPI project structure with best practices, ready-to-use configuration, and organized folder structure.
 
 ## Installation
 
@@ -22,10 +22,10 @@ create-fastapi-app my-project-name
 This will generate a complete FastAPI project structure with the following features:
 
 - Organized directory structure following best practices
-- Pre-configured API router setup
+- Pre-configured API router setup with controllers and services
 - Database connection with SQLAlchemy
-- Environment variable configuration
-- Ready-to-use project structure
+- Environment variable configuration with host and port settings
+- Ready-to-use project structure with proper entry point
 
 ## Project Structure
 
@@ -37,6 +37,9 @@ my-project-name/
 │   │   │   └── __init__.py
 │   │   ├── __init__.py
 │   │   └── api.py
+│   ├── controllers/
+│   │   ├── __init__.py
+│   │   └── base_controller.py
 │   ├── core/
 │   │   ├── __init__.py
 │   │   └── config.py
@@ -47,27 +50,20 @@ my-project-name/
 │   │   └── __init__.py
 │   ├── schemas/
 │   │   └── __init__.py
+│   ├── services/
+│   │   ├── __init__.py
+│   │   └── base_service.py
 │   ├── utils/
 │   │   └── __init__.py
 │   ├── __init__.py
 │   └── main.py
 ├── tests/
 ├── .env
+├── .gitignore
+├── main.py
 ├── requirements.txt
 └── README.md
 ```
-
-## Getting Started
-
-After creating your project:
-
-```bash
-cd my-project-name
-pip install -r requirements.txt
-uvicorn app.main:app --reload
-```
-
-Then open http://localhost:8000 in your browser.
 
 ## Development
 
