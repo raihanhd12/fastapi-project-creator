@@ -31,6 +31,7 @@ create-fastapi-app my-project-name
 - Environment variable configuration with host and port settings
 - Ready-to-use project structure with proper entry point
 
+```
 my-project-name/
 ├── app/
 │ ├── api/
@@ -64,6 +65,7 @@ my-project-name/
 ├── main.py
 ├── requirements.txt
 └── README.md
+```
 
 # Development
 
