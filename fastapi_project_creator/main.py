@@ -30,35 +30,45 @@ def main():
 
     # Create main structure
     folders = [
-        "",
-        "app",
-        "app/api",
-        "app/api/endpoints",
-        "app/controllers",
-        "app/core",
-        "app/db",
-        "app/models",
-        "app/schemas",
-        "app/services",
-        "app/utils",
-        "tests",
+        "",  # Root directory
+        "src",
+        "src/app",
+        "src/app/controllers",
+        "src/app/middleware",
+        "src/app/models",
+        "src/app/schemas",
+        "src/app/services",
+        "src/config",
+        "src/database",
+        "src/database/factories",
+        "src/database/migrations",
+        "src/public",
+        "src/routes",
+        "src/routes/api",
+        "src/scripts",
+        "test",
     ]
 
     for folder in folders:
         folder_path = target_dir / folder
         folder_path.mkdir(parents=True, exist_ok=True)
-        if folder.startswith("app"):
+        if (
+            folder and folder != "test"
+        ):  # Create __init__.py in all subfolders except root and test
             create_file(folder_path / "__init__.py", "")
 
-    # Create basic files
-    create_file(target_dir / "app" / "main.py", APP_MAIN_PY)
+    # Create basic files with updated paths
     create_file(target_dir / "main.py", MAIN_PY)
-    create_file(target_dir / "app" / "api" / "api.py", API_PY)
-    create_file(target_dir / "app" / "core" / "config.py", CONFIG_PY)
-    create_file(target_dir / "app" / "db" / "session.py", DB_SESSION_PY)
-    create_file(target_dir / "app" / "services" / "base_service.py", BASE_SERVICE_PY)
+    create_file(target_dir / "src" / "routes" / "api" / "v1.py", API_PY)
+    create_file(target_dir / "src" / "config" / "env.py", CONFIG_PY)
+    create_file(target_dir / "src" / "config" / "security.py", CONFIG_PY)
+    create_file(target_dir / "src" / "database" / "session.py", DB_SESSION_PY)
     create_file(
-        target_dir / "app" / "controllers" / "base_controller.py", BASE_CONTROLLER_PY
+        target_dir / "src" / "app" / "services" / "base_service.py", BASE_SERVICE_PY
+    )
+    create_file(
+        target_dir / "src" / "app" / "controllers" / "base_controller.py",
+        BASE_CONTROLLER_PY,
     )
     create_file(target_dir / ".env", ENV_FILE)
     create_file(target_dir / ".gitignore", GITIGNORE)
@@ -72,10 +82,10 @@ def main():
     print(f"  python main.py\n")
 
 
-# Templates
+# Templates with updated imports
 APP_MAIN_PY = """from fastapi import FastAPI
-from app.api.api import api_router
-from app.core.config import settings
+from src.routes.api.v1 import api_router
+from src.config.settings import settings
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -91,11 +101,11 @@ def root():
 """
 
 MAIN_PY = """import uvicorn
-from app.core.config import settings
+from src.config.settings import settings
 
 if __name__ == "__main__":
     uvicorn.run(
-        "app.main:app",
+        "src.app.main:app",
         host=settings.HOST,
         port=settings.PORT,
         reload=settings.DEBUG
@@ -107,8 +117,8 @@ API_PY = """from fastapi import APIRouter
 api_router = APIRouter()
 
 # Include your routers here
-# from app.api.endpoints import items
-# api_router.include_router(items.router, prefix="/items", tags=["items"])
+# from src.app.controllers import some_controller
+# api_router.include_router(some_controller.router, prefix="/some", tags=["some"])
 """
 
 CONFIG_PY = """from pydantic import BaseSettings
@@ -141,7 +151,7 @@ DB_SESSION_PY = """from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-from app.core.config import settings
+from src.config.settings import settings
 
 engine = create_engine(
     settings.DATABASE_URL, connect_args={"check_same_thread": False}
@@ -162,12 +172,11 @@ def get_db():
 BASE_SERVICE_PY = """from typing import Generic, TypeVar, Type, List, Optional, Union, Dict, Any
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-from app.db.session import Base
+from src.database.session import Base
 
 ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
-
 
 class BaseService(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     def __init__(self, model: Type[ModelType]):
@@ -219,14 +228,13 @@ from fastapi import Depends, HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from app.db.session import get_db
-from app.services.base_service import BaseService
+from src.database.session import get_db
+from src.app.services.base_service import BaseService
 
 ModelType = TypeVar("ModelType")
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 ServiceType = TypeVar("ServiceType", bound=BaseService)
-
 
 class BaseController(Generic[ModelType, CreateSchemaType, UpdateSchemaType, ServiceType]):
     def __init__(self, service: Type[ServiceType]):
@@ -348,21 +356,26 @@ A FastAPI project with a well-organized structure.
 
 ```
 {project_name}/
-├── app/
-│   ├── api/
-│   │   ├── endpoints/
-│   │   ├── api.py
-│   ├── controllers/
-│   ├── core/
-│   │   ├── config.py
-│   ├── db/
+├── src/
+│   ├── app/
+│   │   ├── controllers/
+│   │   ├── middleware/
+│   │   ├── models/
+│   │   ├── schemas/
+│   │   ├── services/
+│   ├── config/
+│   │   ├── env.py
+│   │   ├── security.py
+│   ├── database/
 │   │   ├── session.py
-│   ├── models/
-│   ├── schemas/
-│   ├── services/
-│   ├── utils/
-│   ├── main.py
-├── tests/
+│   │   ├── factories/
+│   │   ├── migrations/
+│   ├── public/
+│   ├── routes/
+│   │   ├── api/
+│   │   │   ├── v1.py
+│   ├── scripts/
+├── test/
 ├── .env
 ├── .gitignore
 ├── main.py
